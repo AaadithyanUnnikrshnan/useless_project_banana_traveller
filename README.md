@@ -54,49 +54,66 @@ npm run dev
 # Or simply open index.html directly in any web browser!
 Project Documentation
 Screenshots
-![Dashboard Overview](<img width="1592" height="825" alt="image" src="https://github.com/user-attachments/assets/02109597-c7f9-41b3-be04-6481926a205f" />
+![Dashboard Overview](<img width="866" height="852" alt="image" src="https://github.com/user-attachments/assets/4957fa94-dd6a-4d75-8a55-0f97db10d601" />
+
 )
 Main Neo-Brutalist Dashboard displaying real-time banana counter, active expedition chronometer, and tempo detection.
-![Leaflet Map & Route Tracker](<img width="660" height="607" alt="image" src="https://github.com/user-attachments/assets/b6e6143f-c066-4baa-944a-c02898dd3457" />
-)
+![Leaflet Map & Route Tracker](<img width="660" height="607" alt="Image" src="https://github.com/user-attachments/assets/aeae1c0a-52f2-4144-af29-ef367c95ac1f" />)
 High-contrast Leaflet.js satellite canvas plotting GPS coordinates with custom thick strokes and pulsing red markers.
-![Stamps & Trophies Grid](<img width="1438" height="502" alt="image" src="https://github.com/user-attachments/assets/c5c907ff-ef84-479d-bf47-be28c16d954b" />
-)
+![Stamps & Trophies Grid](<img width="866" height="852" alt="Image" src="https://github.com/user-attachments/assets/e7c408fd-0d36-467e-807f-22aabac7ea03" />)
 Neo-brutalist achievement sticker grid showing unlocked badges (Unit Collector, Couch Potato, Marathoner, etc.).
 
+#diagram 
+```
 
-
-Workflow Diagram
-code
-Code
-[ Physical User Motion ]
-             │
-             ▼
-  [ Web Geolocation API ] ── (Latitude / Longitude / Accuracy)
-             │
-             ▼
-  [ Low-Pass Jitter Filter ] ── (Rejects stationary drift < 3.2m)
-             │
-             ▼
-  [ Haversine Math Core ] ── (Calculates internal delta distance)
-             │
-             ▼
-  [ Distance Obfuscation Matrix ] ── (Strictly purges meters/km/miles)
-   ├─► 🍌 Bananas Conversion (~0.178m factor)
-   ├─► 🦒 Giraffes Conversion (~5.0m factor)
-   ├─► 🚌 Double-Decker Buses (~9.5m factor)
-   ├─► 🏈 Football Fields (~100.0m factor)
-   └─► 🐋 Blue Whales (~30.0m factor)
-             │
-             ▼
-  [ Neo-Brutalist UI Engine ]
-   ├─► Giant Number Readout & Dynamic Unit Pill
-   ├─► Leaflet Polyline Draw + Position Marker
-   ├─► Motion State Analyzer (Stationary / Strolling / Sprinting)
-   └─► Achievement Engine + Web Audio Synthesizer Toasts
-Architectural workflow diagram illustrating the signal intake, sensor filtering, distance obfuscation, and UI rendering pipeline.
+                    ┌────────────────────────┐ 
+                    │  Physical User Motion  │
+                    └───────────┬────────────┘
+                                │
+                                ▼
+                    ┌────────────────────────┐
+                    │  Web Geolocation API   │
+                    │  (Lat / Lon / Acc)     │
+                    └───────────┬────────────┘
+                                │
+                                ▼
+                    ┌────────────────────────┐
+                    │ Low-Pass Jitter Filter │
+                    │ (Rejects drift < 3.2m) │
+                    └───────────┬────────────┘
+                                │
+                                ▼
+                    ┌────────────────────────┐
+                    │  Haversine Math Core   │
+                    │  (Calculates Δ dist)   │
+                    └───────────┬────────────┘
+                                │
+                                ▼
+                    ┌────────────────────────┐
+                    │ Obfuscation Matrix     │
+                    │ (Purges SI units)      │
+                    └───────────┬────────────┘
+                                │
+      ┌───────────┬─────────────┼─────────────┬───────────┐
+      │           │             │             │           │
+      ▼           ▼             ▼             ▼           ▼
+  🍌 Bananas   🦒 Giraffes   🚌 Buses    🏈 Fields   🐋 Whales
+  (~0.178m)    (~5.0m)       (~9.5m)     (~100.0m)   (~30.0m)
+      │           │             │             │           │
+      └───────────┴─────────────┼─────────────┴───────────┘
+                                │
+                                ▼
+                    ┌────────────────────────┐
+                    │ Neo-Brutalist UI       │
+                    └───────────┬────────────┘
+                                │
+ ┌─────────────────┬────────────┴────────────┬──────────────────┐
+ │                 │                         │                  │
+ ▼                 ▼                         ▼                  ▼
+Giant Readout    Leaflet Map             Motion State      Audio Toasts &
+& Unit Pill      Polyline & Marker       Analyzer          Achievements
 Project Demo
-
+```
 Video
 [https://youtu.be/ATiBDjKMt98]
 Demonstrating live GPS walk tracking, switching measurement units in real-time, triggering simulated demo locomotion, and unlocking the "Couch Potato" achievement.
