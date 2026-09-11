@@ -54,13 +54,11 @@ npm run dev
 # Or simply open index.html directly in any web browser!
 Project Documentation
 Screenshots
-![Dashboard Overview](<img width="866" height="852" alt="image" src="https://github.com/user-attachments/assets/4957fa94-dd6a-4d75-8a55-0f97db10d601" />
-
-)
+![Dashboard Overview](<img width="1592" height="825" alt="Image" src="https://github.com/user-attachments/assets/ae9051dd-488e-4bef-b1d3-fb79ee60ce1e" />)
 Main Neo-Brutalist Dashboard displaying real-time banana counter, active expedition chronometer, and tempo detection.
-![Leaflet Map & Route Tracker]( <img width="660" height="607" alt="Image" src="https://github.com/user-attachments/assets/aeae1c0a-52f2-4144-af29-ef367c95ac1f" /> )
+![Leaflet Map & Route Tracker](<img width="660" height="607" alt="Image" src="https://github.com/user-attachments/assets/1bdcff64-7f3b-4e3b-9265-1d442ef4ebaa" /> )
 High-contrast Leaflet.js satellite canvas plotting GPS coordinates with custom thick strokes and pulsing red markers.
-![Stamps & Trophies Grid]( <img width="866" height="852" alt="Image" src="https://github.com/user-attachments/assets/e7c408fd-0d36-467e-807f-22aabac7ea03" />  )
+![Stamps & Trophies Grid]( <img width="866" height="852" alt="image" src="https://github.com/user-attachments/assets/4957fa94-dd6a-4d75-8a55-0f97db10d601" /> )
 Neo-brutalist achievement sticker grid showing unlocked badges (Unit Collector, Couch Potato, Marathoner, etc.).
 
 #diagram 
