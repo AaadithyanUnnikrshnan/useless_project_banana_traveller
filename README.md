@@ -101,7 +101,7 @@ Video
 [https://youtu.be/ATiBDjKMt98]
 Demonstrating live GPS walk tracking, switching measurement units in real-time, triggering simulated demo locomotion, and unlocking the "Couch Potato" achievement.
 Additional Demos
-Live Hosted Application: [https://github.com/AaadithyanUnnikrshnan/useless_project_banana_traveller]
+Live Hosted Application(using vercel): [https://uselessprojectbananatraveller.vercel.app/]
 
 Team Contributions
 
