@@ -1,1 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absurd Navigator</title>
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <style>
+    :root {
+      --bg: #fdfbf7;
+      --card-bg: #f4eee0;
+      --text: #362c28;
+      --accent: #8b0000;
+      --border: #d3c4a5;
+      --gold: #b8860b;
+    }
 
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .ticket-container {
+      position: relative;
+      width: 90%;
+      max-width: 500px;
+      margin: 20px 0;
+      background: var(--card-bg);
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      text-align: center;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-bottom: 2px solid var(--text);
+      padding-bottom: 10px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    select, button {
+      font-family: inherit;
+      padding: 10px;
+      border: 1px solid var(--text);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      transition: opacity 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #map {
+      height: 260px;
+      width: 100%;
+      border: 2px solid var(--text);
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .leaflet-tile-pane {
+      filter: sepia(0.8) contrast(1.1) brightness(0.9);
+    }
+
+    .readout {
+      text-align: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .readout-val {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--accent);
+      margin: 5px 0;
+    }
+
+    .readout-unit {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Achievements Section */
+    .achievements-box {
+      border-top: 2px solid var(--text);
+      padding-top: 10px;
+    }
+
+    .achievements-box h3 {
+      margin: 0 0 8px 0;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      background: var(--bg);
+      border: 1px dashed var(--border);
+      border-radius: 3px;
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge.unlocked {
+      border: 1px solid var(--gold);
+      color: var(--text);
+      background: #fff8dc;
+      font-weight: bold;
+    }
+
+    /* Notification Toast */
+    .toast {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 2px solid var(--gold);
+      font-size: 0.8rem;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: top 0.4s ease-in-out;
+      z-index: 1000;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      top: 15px;
+    }
+
+    .status {
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 10px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+<div class="ticket-container">
+  <div class="toast" id="achievementToast">🏆 Achievement Unlocked!</div>
+
+  <h1>Transit Pass</h1>
+  
+  <div class="controls">
+    <div>
+      <label for="unitSelect">Select Unit of Measurement:</label>
+      <select id="unitSelect">
+        <option value="bananas">Bananas (0.178 m)</option>
+        <option value="giraffes">Giraffes (5.5 m)</option>
+        <option value="buses">Double-Decker Buses (11.23 m)</option>
+        <option value="fields">Football Fields (109.7 m)</option>
+        <option value="whales">Blue Whales (30 m)</option>
+        <option value="blocks">Vaguely-Sized City Blocks (100 m)</option>
+      </select>
+    </div>
+    
+    <button id="toggleBtn">Begin Journey</button>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="readout">
+    <div>DISTANCE TRAVELED</div>
+    <div class="readout-val" id="distanceVal">0</div>
+    <div class="readout-unit" id="unitLabel">Bananas</div>
+  </div>
+
+  <div class="achievements-box">
+    <h3>Stamp Collection</h3>
+    <div class="badge-list" id="badgeList"></div>
+  </div>
+
+  <div class="status" id="statusText">Awaiting GPS permissions...</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  const UNITS = {
+    bananas: { factor: 1 / 0.178, label: 'Bananas' },
+    giraffes: { factor: 1 / 5.5, label: 'Giraffes' },
+    buses: { factor: 1 / 11.23, label: 'Double-Decker Buses' },
+    fields: { factor: 1 / 109.7, label: 'Football Fields' },
+    whales: { factor: 1 / 30, label: 'Blue Whales' },
+    blocks: { factor: 1 / 100, label: 'Vaguely-Sized City Blocks' }
+  };
+
+  // Achievement Definitions
+  const ACHIEVEMENTS = [
+    { id: 'first_steps', title: 'First Steps', icon: '👣', desc: 'Cover 100 meters', condition: state => state.totalDistance >= 100 },
+    { id: 'half_k', title: 'Voyager', icon: '🧭', desc: 'Cover 500 meters', condition: state => state.totalDistance >= 500 },
+    { id: 'km_club', title: '1K Explorer', icon: '🌍', desc: 'Cover 1,000 meters', condition: state => state.totalDistance >= 1000 },
+    { id: 'continuous_walk', title: 'Marathoner', icon: '⚡', desc: 'Walk continuously for 3 minutes', condition: state => state.continuousWalkTime >= 180 },
+    { id: 'statue', title: 'Human Statue', icon: '🗿', desc: 'Stay stationary for 45s after starting', condition: state => state.idleTime >= 45 }
+  ];
+
+  let unlockedAchievements = new Set();
+
+  let map, polyline, currentMarker;
+  let watchId = null;
+  let totalDistanceMeters = 0;
+  let lastCoord = null;
+
+  // Timers for tracking walking/idling
+  let lastMovementTime = null;
+  let continuousWalkStart = null;
+  let trackerInterval = null;
+  let idleTimeSeconds = 0;
+  let continuousWalkSeconds = 0;
+
+  const minJitterThresholdMeters = 1.5;
+
+  const toggleBtn = document.getElementById('toggleBtn');
+  const unitSelect = document.getElementById('unitSelect');
+  const distanceVal = document.getElementById('distanceVal');
+  const unitLabel = document.getElementById('unitLabel');
+  const statusText = document.getElementById('statusText');
+  const badgeList = document.getElementById('badgeList');
+  const toast = document.getElementById('achievementToast');
+
+  function initMap() {
+    map = L.map('map').setView([0, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    polyline = L.polyline([], { color: '#8b0000', weight: 4, opacity: 0.8 }).addTo(map);
+    renderBadges();
+  }
+
+  function renderBadges() {
+    badgeList.innerHTML = '';
+    ACHIEVEMENTS.forEach(ach => {
+      const isUnlocked = unlockedAchievements.has(ach.id);
+      const el = document.createElement('div');
+      el.className = `badge ${isUnlocked ? 'unlocked' : ''}`;
+      el.title = ach.desc;
+      el.innerHTML = `<span>${ach.icon}</span> <span>${ach.title}</span>`;
+      badgeList.appendChild(el);
+    });
+  }
+
+  function triggerToast(title, icon) {
+    toast.textContent = `${icon} Unlocked: ${title}!`;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3500);
+  }
+
+  function checkAchievements() {
+    const currentState = {
+      totalDistance: totalDistanceMeters,
+      idleTime: idleTimeSeconds,
+      continuousWalkTime: continuousWalkSeconds
+    };
+
+    ACHIEVEMENTS.forEach(ach => {
+      if (!unlockedAchievements.has(ach.id) && ach.condition(currentState)) {
+        unlockedAchievements.add(ach.id);
+        renderBadges();
+        triggerToast(ach.title, ach.icon);
+      }
+    });
+  }
+
+  function getHaversineDistance(coords1, coords2) {
+    const R = 6371000;
+    const rad = Math.PI / 180;
+    
+    const dLat = (coords2[0] - coords1[0]) * rad;
+    const dLon = (coords2[1] - coords1[1]) * rad;
+
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(coords1[0] * rad) * Math.cos(coords2[0] * rad) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  function updateDisplay() {
+    const selectedKey = unitSelect.value;
+    const unitInfo = UNITS[selectedKey];
+    const convertedValue = totalDistanceMeters * unitInfo.factor;
+    
+    distanceVal.textContent = convertedValue.toFixed(1);
+    unitLabel.textContent = unitInfo.label;
+  }
+
+  function handlePositionUpdate(position) {
+    const { latitude, longitude, accuracy } = position.coords;
+    const newCoord = [latitude, longitude];
+
+    if (!lastCoord) {
+      lastCoord = newCoord;
+      lastMovementTime = Date.now();
+      continuousWalkStart = Date.now();
+      map.setView(newCoord, 18);
+      
+      currentMarker = L.circleMarker(newCoord, {
+        radius: 6,
+        fillColor: '#8b0000',
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 1
+      }).addTo(map);
+
+      polyline.addLatLng(newCoord);
+      statusText.textContent = `Tracking active (GPS Accuracy: ~${Math.round(accuracy)}m)`;
+      return;
+    }
+
+    const dist = getHaversineDistance(lastCoord, newCoord);
+
+    if (dist >= minJitterThresholdMeters) {
+      totalDistanceMeters += dist;
+      lastCoord = newCoord;
+      lastMovementTime = Date.now(); // Reset idle clock
+
+      polyline.addLatLng(newCoord);
+      currentMarker.setLatLng(newCoord);
+      map.panTo(newCoord, { animate: true, duration: 0.5 });
+
+      updateDisplay();
+      checkAchievements();
+    }
+  }
+
+  function handlePositionError(err) {
+    statusText.textContent = `GPS Error: ${err.message}`;
+  }
+
+  function startTracking() {
+    if (!('geolocation' in navigator)) {
+      statusText.textContent = "Geolocation is not supported by your browser.";
+      return;
+    }
+
+    totalDistanceMeters = 0;
+    idleTimeSeconds = 0;
+    continuousWalkSeconds = 0;
+    lastCoord = null;
+    lastMovementTime = Date.now();
+    continuousWalkStart = Date.now();
+
+    polyline.setLatLngs([]);
+    if (currentMarker) map.removeLayer(currentMarker);
+    updateDisplay();
+
+    // Start tick interval to monitor stationary / active walking states
+    trackerInterval = setInterval(() => {
+      const now = Date.now();
+      
+      if (lastMovementTime) {
+        const timeSinceMove = (now - lastMovementTime) / 1000;
+        if (timeSinceMove > 5) {
+          // Stationary for more than 5s
+          idleTimeSeconds += 1;
+          continuousWalkStart = now; // Reset walking streak
+          continuousWalkSeconds = 0;
+        } else {
+          // Moving
+          continuousWalkSeconds = (now - continuousWalkStart) / 1000;
+        }
+        checkAchievements();
+      }
+    }, 1000);
+
+    statusText.textContent = "Acquiring satellite lock...";
+    watchId = navigator.geolocation.watchPosition(
+      handlePositionUpdate,
+      handlePositionError,
+      {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 10000
+      }
+    );
+
+    toggleBtn.textContent = "End Journey";
+    toggleBtn.style.background = "#362c28";
+  }
+
+  function stopTracking() {
+    if (watchId !== null) {
+      navigator.geolocation.clearWatch(watchId);
+      watchId = null;
+    }
+    if (trackerInterval !== null) {
+      clearInterval(trackerInterval);
+      trackerInterval = null;
+    }
+    statusText.textContent = "Journey ended.";
+    toggleBtn.textContent = "Begin Journey";
+    toggleBtn.style.background = "var(--accent)";
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    if (watchId === null) {
+      startTracking();
+    } else {
+      stopTracking();
+    }
+  });
+
+  unitSelect.addEventListener('change', updateDisplay);
+
+  initMap();
+</script>
+
+</body>
+</html>
