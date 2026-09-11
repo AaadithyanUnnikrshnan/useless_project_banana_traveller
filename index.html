@@ -1,1109 +1,1140 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>How Many Bananas Away</title>
-    <meta name="description" content="A neo-brutalist GPS journey tracker that converts real-world physical distance into humorous, unconventional units." />
-    <meta property="og:title" content="How Many Bananas Away" />
-    <meta property="og:description" content="A neo-brutalist GPS journey tracker that converts real-world physical distance into humorous, unconventional units." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Leaflet.js CDN -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How Many Bananas Away</title>
+  <meta name="description"
+    content="A neo-brutalist GPS journey tracker that converts real-world physical distance into humorous, unconventional units." />
+  <meta property="og:title" content="How Many Bananas Away" />
+  <meta property="og:description"
+    content="A neo-brutalist GPS journey tracker that converts real-world physical distance into humorous, unconventional units." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-    <style>
-      :root {
-        --bg-cream: #FFFDF0;
-        --panel-white: #FFFFFF;
-        --accent-cyan: #00E5FF;
-        --alert-red: #FF3366;
-        --warning-yellow: #FFD700;
-        --brutal-black: #000000;
-        --border-thick: 3px solid #000000;
-        --shadow-brutal: 4px 4px 0px #000000;
-        --shadow-pressed: 1px 1px 0px #000000;
+  <!-- Leaflet.js CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <style>
+    :root {
+      --bg-cream: #FFFDF0;
+      --panel-white: #FFFFFF;
+      --accent-cyan: #00E5FF;
+      --alert-red: #FF3366;
+      --warning-yellow: #FFD700;
+      --brutal-black: #000000;
+      --border-thick: 3px solid #000000;
+      --shadow-brutal: 4px 4px 0px #000000;
+      --shadow-pressed: 1px 1px 0px #000000;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--brutal-black);
+      font-family: 'Arial Black', 'Impact', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Neo-brutalist Components */
+    .brutal-card {
+      background: var(--panel-white);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-brutal);
+      padding: 1.25rem;
+      position: relative;
+    }
+
+    .brutal-header {
+      background: var(--warning-yellow);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-brutal);
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      font-size: 2rem;
+      background: var(--accent-cyan);
+      border: var(--border-thick);
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 2px 2px 0px #000;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .sub-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #000;
+      color: #fff;
+      padding: 0.15rem 0.5rem;
+      display: inline-block;
+      margin-top: 0.2rem;
+    }
+
+    /* Status Pill */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--panel-white);
+      border: var(--border-thick);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      box-shadow: 2px 2px 0px #000;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #000;
+      background: #999;
+    }
+
+    .status-dot.active {
+      background: #00E676;
+      box-shadow: 0 0 0 2px #000;
+      animation: pulse 1.5s infinite;
+    }
+
+    .status-dot.simulating {
+      background: var(--accent-cyan);
+      animation: pulse 1s infinite;
+    }
+
+    .status-dot.searching {
+      background: var(--warning-yellow);
+      animation: pulse 0.8s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
       }
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        -webkit-tap-highlight-color: transparent;
+      50% {
+        transform: scale(1.2);
       }
+    }
 
-      body {
-        background-color: var(--bg-cream);
-        color: var(--brutal-black);
-        font-family: 'Arial Black', 'Impact', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        min-height: 100vh;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
+    /* Buttons */
+    .brutal-btn {
+      background: var(--accent-cyan);
+      color: #000;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-brutal);
+      padding: 0.75rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: transform 0.06s ease, box-shadow 0.06s ease, background-color 0.1s ease;
+      user-select: none;
+    }
 
-      .container {
-        width: 100%;
-        max-width: 1100px;
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-      }
+    .brutal-btn:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px #000;
+    }
 
-      /* Neo-brutalist Components */
-      .brutal-card {
-        background: var(--panel-white);
-        border: var(--border-thick);
-        box-shadow: var(--shadow-brutal);
-        padding: 1.25rem;
-        position: relative;
-      }
+    .brutal-btn:active {
+      transform: translate(4px, 4px);
+      box-shadow: var(--shadow-pressed);
+    }
 
-      .brutal-header {
-        background: var(--warning-yellow);
-        border: var(--border-thick);
-        box-shadow: var(--shadow-brutal);
-        padding: 1rem 1.25rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-      }
+    .btn-red {
+      background: var(--alert-red);
+      color: #fff;
+    }
 
-      .logo-group {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
+    .btn-yellow {
+      background: var(--warning-yellow);
+    }
 
-      .logo-icon {
-        font-size: 2rem;
-        background: var(--accent-cyan);
-        border: var(--border-thick);
-        width: 48px;
-        height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 2px 2px 0px #000;
-      }
+    .btn-white {
+      background: #fff;
+    }
 
-      h1 {
-        font-size: 1.75rem;
-        font-weight: 900;
-        letter-spacing: -0.04em;
-        text-transform: uppercase;
-        line-height: 1;
-      }
+    .btn-sm {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+    }
 
-      .sub-title {
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        background: #000;
-        color: #fff;
-        padding: 0.15rem 0.5rem;
-        display: inline-block;
-        margin-top: 0.2rem;
-      }
+    /* Dropdown */
+    .unit-selector-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
 
-      /* Status Pill */
-      .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: var(--panel-white);
-        border: var(--border-thick);
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        box-shadow: 2px 2px 0px #000;
-      }
+    .unit-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
 
-      .status-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        border: 2px solid #000;
-        background: #999;
-      }
+    .brutal-select {
+      background: #fff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-brutal);
+      padding: 0.75rem 1rem;
+      font-family: inherit;
+      font-size: 1.1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      outline: none;
+      width: 100%;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
 
-      .status-dot.active {
-        background: #00E676;
-        box-shadow: 0 0 0 2px #000;
-        animation: pulse 1.5s infinite;
-      }
+    /* Main Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.25rem;
+    }
 
-      .status-dot.simulating {
-        background: var(--accent-cyan);
-        animation: pulse 1s infinite;
-      }
-
-      .status-dot.searching {
-        background: var(--warning-yellow);
-        animation: pulse 0.8s infinite;
-      }
-
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-      }
-
-      /* Buttons */
-      .brutal-btn {
-        background: var(--accent-cyan);
-        color: #000;
-        border: var(--border-thick);
-        box-shadow: var(--shadow-brutal);
-        padding: 0.75rem 1.25rem;
-        font-family: inherit;
-        font-size: 0.95rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: transform 0.06s ease, box-shadow 0.06s ease, background-color 0.1s ease;
-        user-select: none;
-      }
-
-      .brutal-btn:hover {
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0px #000;
-      }
-
-      .brutal-btn:active {
-        transform: translate(4px, 4px);
-        box-shadow: var(--shadow-pressed);
-      }
-
-      .btn-red {
-        background: var(--alert-red);
-        color: #fff;
-      }
-
-      .btn-yellow {
-        background: var(--warning-yellow);
-      }
-
-      .btn-white {
-        background: #fff;
-      }
-
-      .btn-sm {
-        padding: 0.4rem 0.75rem;
-        font-size: 0.8rem;
-      }
-
-      /* Dropdown */
-      .unit-selector-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-      }
-
-      .unit-label {
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-
-      .brutal-select {
-        background: #fff;
-        border: var(--border-thick);
-        box-shadow: var(--shadow-brutal);
-        padding: 0.75rem 1rem;
-        font-family: inherit;
-        font-size: 1.1rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        cursor: pointer;
-        outline: none;
-        width: 100%;
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        padding-right: 2.5rem;
-      }
-
-      /* Main Dashboard Grid */
+    @media (max-width: 860px) {
       .dashboard-grid {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr;
-        gap: 1.25rem;
+        grid-template-columns: 1fr;
       }
+    }
 
-      @media (max-width: 860px) {
-        .dashboard-grid {
-          grid-template-columns: 1fr;
-        }
-      }
+    /* Giant Readout Card */
+    .readout-card {
+      background: var(--panel-white);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-brutal);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+    }
 
-      /* Giant Readout Card */
-      .readout-card {
-        background: var(--panel-white);
-        border: var(--border-thick);
-        box-shadow: var(--shadow-brutal);
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: 1rem;
-      }
+    .readout-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: var(--border-thick);
+      padding-bottom: 0.75rem;
+    }
 
-      .readout-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        border-bottom: var(--border-thick);
-        padding-bottom: 0.75rem;
-      }
+    .primary-number {
+      font-size: clamp(3.2rem, 7vw, 5.5rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      word-break: break-all;
+      color: #000;
+    }
 
-      .primary-number {
-        font-size: clamp(3.2rem, 7vw, 5.5rem);
-        font-weight: 900;
-        line-height: 0.95;
-        letter-spacing: -0.05em;
-        word-break: break-all;
-        color: #000;
-      }
+    .primary-unit-name {
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #000;
+      background: var(--warning-yellow);
+      padding: 0.25rem 0.6rem;
+      border: 2px solid #000;
+      display: inline-block;
+      margin-top: 0.35rem;
+    }
 
-      .primary-unit-name {
-        font-size: clamp(1.1rem, 2.5vw, 1.6rem);
-        font-weight: 900;
-        text-transform: uppercase;
-        color: #000;
-        background: var(--warning-yellow);
-        padding: 0.25rem 0.6rem;
-        border: 2px solid #000;
-        display: inline-block;
-        margin-top: 0.35rem;
-      }
+    .meta-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      border-top: var(--border-thick);
+      padding-top: 1rem;
+    }
 
-      .meta-stats-row {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.75rem;
-        border-top: var(--border-thick);
-        padding-top: 1rem;
-      }
+    .meta-stat-item {
+      background: var(--bg-cream);
+      border: 2px solid #000;
+      padding: 0.5rem;
+      text-align: center;
+    }
 
-      .meta-stat-item {
-        background: var(--bg-cream);
-        border: 2px solid #000;
-        padding: 0.5rem;
-        text-align: center;
-      }
+    .meta-stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: #555;
+    }
 
-      .meta-stat-label {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        color: #555;
-      }
+    .meta-stat-val {
+      font-size: 1.1rem;
+      font-weight: 900;
+      margin-top: 0.15rem;
+    }
 
-      .meta-stat-val {
-        font-size: 1.1rem;
-        font-weight: 900;
-        margin-top: 0.15rem;
-      }
+    /* Map Container */
+    .map-wrapper {
+      background: #fff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-brutal);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-      /* Map Container */
-      .map-wrapper {
-        background: #fff;
-        border: var(--border-thick);
-        box-shadow: var(--shadow-brutal);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
+    .map-toolbar {
+      background: #fff;
+      border-bottom: var(--border-thick);
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
 
-      .map-toolbar {
-        background: #fff;
-        border-bottom: var(--border-thick);
-        padding: 0.5rem 0.75rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
+    #map {
+      height: 380px;
+      width: 100%;
+      background: #ddd;
+    }
 
-      #map {
-        height: 380px;
-        width: 100%;
-        background: #ddd;
-      }
+    /* OpenStreetMap Neo-Brutalist filter */
+    .leaflet-tile-pane {
+      filter: saturate(1.4) contrast(1.1);
+    }
 
-      /* OpenStreetMap Neo-Brutalist filter */
-      .leaflet-tile-pane {
-        filter: saturate(1.4) contrast(1.1);
-      }
+    .leaflet-control-zoom {
+      border: var(--border-thick) !important;
+      box-shadow: 3px 3px 0px #000 !important;
+      border-radius: 0 !important;
+    }
 
-      .leaflet-control-zoom {
-        border: var(--border-thick) !important;
-        box-shadow: 3px 3px 0px #000 !important;
-        border-radius: 0 !important;
-      }
+    .leaflet-control-zoom a {
+      background-color: #fff !important;
+      color: #000 !important;
+      border-bottom: 2px solid #000 !important;
+      font-weight: 900 !important;
+      border-radius: 0 !important;
+    }
 
-      .leaflet-control-zoom a {
-        background-color: #fff !important;
-        color: #000 !important;
-        border-bottom: 2px solid #000 !important;
-        font-weight: 900 !important;
-        border-radius: 0 !important;
-      }
+    .leaflet-control-zoom a:last-child {
+      border-bottom: none !important;
+    }
 
-      .leaflet-control-zoom a:last-child {
-        border-bottom: none !important;
-      }
+    .leaflet-control-zoom a:hover {
+      background-color: var(--warning-yellow) !important;
+    }
 
-      .leaflet-control-zoom a:hover {
-        background-color: var(--warning-yellow) !important;
-      }
+    /* Action Bar */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      background: var(--panel-white);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-brutal);
+      padding: 1rem;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-      /* Action Bar */
-      .controls-bar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        background: var(--panel-white);
-        border: var(--border-thick);
-        box-shadow: var(--shadow-brutal);
-        padding: 1rem;
-        align-items: center;
-        justify-content: space-between;
-      }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
 
-      .btn-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-      }
+    /* Achievements Section */
+    .achievements-section {
+      background: var(--panel-white);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-brutal);
+      padding: 1.25rem;
+    }
 
-      /* Achievements Section */
-      .achievements-section {
-        background: var(--panel-white);
-        border: var(--border-thick);
-        box-shadow: var(--shadow-brutal);
-        padding: 1.25rem;
-      }
+    .section-heading-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: var(--border-thick);
+      padding-bottom: 0.5rem;
+    }
 
-      .section-heading-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-        border-bottom: var(--border-thick);
-        padding-bottom: 0.5rem;
-      }
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-      .section-title {
-        font-size: 1.3rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
+    .badge-counter {
+      background: #000;
+      color: #fff;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.85rem;
+      border: 2px solid #000;
+    }
 
-      .badge-counter {
-        background: #000;
-        color: #fff;
-        padding: 0.2rem 0.6rem;
-        font-size: 0.85rem;
-        border: 2px solid #000;
-      }
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.85rem;
+    }
 
-      .achievements-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 0.85rem;
-      }
+    .achievement-card {
+      border: var(--border-thick);
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      position: relative;
+      transition: transform 0.15s ease;
+    }
 
-      .achievement-card {
-        border: var(--border-thick);
-        padding: 0.85rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-        position: relative;
-        transition: transform 0.15s ease;
-      }
+    /* Unlocked = Bright Yellow fill */
+    .achievement-card.unlocked {
+      background: var(--warning-yellow);
+      box-shadow: 3px 3px 0px #000;
+    }
 
-      /* Unlocked = Bright Yellow fill */
-      .achievement-card.unlocked {
-        background: var(--warning-yellow);
-        box-shadow: 3px 3px 0px #000;
-      }
+    .achievement-card.unlocked:hover {
+      transform: rotate(-1deg) scale(1.02);
+    }
 
-      .achievement-card.unlocked:hover {
-        transform: rotate(-1deg) scale(1.02);
-      }
-
-      /* Locked = Grayed out with diagonal stripes */
-      .achievement-card.locked {
-        background: repeating-linear-gradient(
-          45deg,
+    /* Locked = Grayed out with diagonal stripes */
+    .achievement-card.locked {
+      background: repeating-linear-gradient(45deg,
           #e5e5e5,
           #e5e5e5 10px,
           #f5f5f5 10px,
-          #f5f5f5 20px
-        );
-        opacity: 0.6;
-        box-shadow: none;
+          #f5f5f5 20px);
+      opacity: 0.6;
+      box-shadow: none;
+    }
+
+    .ach-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ach-icon {
+      font-size: 1.6rem;
+    }
+
+    .ach-stamp {
+      font-size: 0.65rem;
+      font-weight: 900;
+      border: 2px solid #000;
+      padding: 0.1rem 0.35rem;
+      text-transform: uppercase;
+      background: #fff;
+    }
+
+    .achievement-card.unlocked .ach-stamp {
+      background: #00E676;
+    }
+
+    .ach-name {
+      font-size: 0.95rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .ach-desc {
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: #222;
+    }
+
+    /* Neo-brutalist Toast Notification */
+    #toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      pointer-events: none;
+    }
+
+    .brutal-toast {
+      pointer-events: auto;
+      background: var(--warning-yellow);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-brutal);
+      padding: 1rem 1.25rem;
+      max-width: 340px;
+      animation: toast-in 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    @keyframes toast-in {
+      from {
+        transform: translateY(50px) scale(0.9);
+        opacity: 0;
       }
 
-      .ach-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .toast-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+      border-bottom: 2px solid #000;
+      padding-bottom: 0.25rem;
+    }
+
+    .toast-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .toast-desc {
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 0.2rem;
+    }
+
+    /* Modal for Info / Export */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-cream);
+      border: var(--border-thick);
+      box-shadow: 8px 8px 0px #000;
+      max-width: 580px;
+      width: 100%;
+      padding: 1.5rem;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: var(--border-thick);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Custom Map Marker Styling */
+    .pulse-marker {
+      width: 22px;
+      height: 22px;
+      background: var(--alert-red);
+      border: 3px solid #000000;
+      border-radius: 50%;
+      box-shadow: 2px 2px 0px #000;
+      animation: pulse-ring 1.8s infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(1);
       }
 
-      .ach-icon {
-        font-size: 1.6rem;
+      50% {
+        transform: scale(1.3);
       }
 
-      .ach-stamp {
-        font-size: 0.65rem;
-        font-weight: 900;
-        border: 2px solid #000;
-        padding: 0.1rem 0.35rem;
-        text-transform: uppercase;
-        background: #fff;
+      100% {
+        transform: scale(1);
       }
+    }
+  </style>
+</head>
 
-      .achievement-card.unlocked .ach-stamp {
-        background: #00E676;
-      }
+<body>
+  <div class="container">
+    <!-- App Header -->
+    <header class="brutal-header" id="app-header">
+      <div class="logo-group">
+        <div class="logo-icon">🍌</div>
+        <div>
+          <h1>HOW MANY BANANAS AWAY</h1>
+          <div class="sub-title">100% OBFUSCATED PHYSICAL DISTANCE</div>
+        </div>
+      </div>
 
-      .ach-name {
-        font-size: 0.95rem;
-        font-weight: 900;
-        text-transform: uppercase;
-      }
+      <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+        <div class="status-badge" id="gps-status-badge">
+          <span class="status-dot" id="gps-status-dot"></span>
+          <span id="gps-status-text">GPS: READY</span>
+        </div>
 
-      .ach-desc {
-        font-size: 0.75rem;
-        font-weight: 700;
-        line-height: 1.3;
-        color: #222;
-      }
+        <button class="brutal-btn btn-sm btn-white" id="info-btn" title="About & Formulas">❓ INFO</button>
+      </div>
+    </header>
 
-      /* Neo-brutalist Toast Notification */
-      #toast-container {
-        position: fixed;
-        bottom: 1.5rem;
-        right: 1.5rem;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        pointer-events: none;
-      }
+    <!-- Unit Selector Bar -->
+    <div class="brutal-card" style="padding: 0.85rem 1.25rem;">
+      <div class="unit-selector-wrapper">
+        <label for="unit-select" class="unit-label">📏 SELECT UNCONVENTIONAL UNIT OF MEASUREMENT:</label>
+        <select id="unit-select" class="brutal-select">
+          <option value="bananas" selected>🍌 BANANAS</option>
+          <option value="giraffes">🦒 GIRAFFES</option>
+          <option value="buses">🚌 DOUBLE-DECKER BUSES</option>
+          <option value="football_fields">🏈 FOOTBALL FIELDS</option>
+          <option value="blue_whales">🐋 BLUE WHALES</option>
+          <option value="city_blocks">🏙️ VAGUELY-SIZED CITY BLOCKS</option>
+        </select>
+      </div>
+    </div>
 
-      .brutal-toast {
-        pointer-events: auto;
-        background: var(--warning-yellow);
-        border: var(--border-thick);
-        box-shadow: var(--shadow-brutal);
-        padding: 1rem 1.25rem;
-        max-width: 340px;
-        animation: toast-in 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-      }
-
-      @keyframes toast-in {
-        from {
-          transform: translateY(50px) scale(0.9);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0) scale(1);
-          opacity: 1;
-        }
-      }
-
-      .toast-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.35rem;
-        border-bottom: 2px solid #000;
-        padding-bottom: 0.25rem;
-      }
-
-      .toast-title {
-        font-size: 1.05rem;
-        font-weight: 900;
-        text-transform: uppercase;
-      }
-
-      .toast-desc {
-        font-size: 0.8rem;
-        font-weight: 700;
-        margin-top: 0.2rem;
-      }
-
-      /* Modal for Info / Export */
-      .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.7);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        padding: 1rem;
-      }
-
-      .modal-overlay.active {
-        display: flex;
-      }
-
-      .modal-content {
-        background: var(--bg-cream);
-        border: var(--border-thick);
-        box-shadow: 8px 8px 0px #000;
-        max-width: 580px;
-        width: 100%;
-        padding: 1.5rem;
-        max-height: 90vh;
-        overflow-y: auto;
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: var(--border-thick);
-        padding-bottom: 0.75rem;
-        margin-bottom: 1rem;
-      }
-
-      /* Custom Map Marker Styling */
-      .pulse-marker {
-        width: 22px;
-        height: 22px;
-        background: var(--alert-red);
-        border: 3px solid #000000;
-        border-radius: 50%;
-        box-shadow: 2px 2px 0px #000;
-        animation: pulse-ring 1.8s infinite;
-      }
-
-      @keyframes pulse-ring {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.3); }
-        100% { transform: scale(1); }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <!-- App Header -->
-      <header class="brutal-header" id="app-header">
-        <div class="logo-group">
-          <div class="logo-icon">🍌</div>
+    <!-- Main Dashboard: Readout + Map -->
+    <div class="dashboard-grid">
+      <!-- Big Number Readout -->
+      <div class="readout-card" id="readout-panel">
+        <div class="readout-top">
           <div>
-            <h1>HOW MANY BANANAS AWAY</h1>
-            <div class="sub-title">100% OBFUSCATED PHYSICAL DISTANCE</div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #555;">TOTAL
+              PHYSICAL DISTANCE COVERED</div>
+            <div class="primary-unit-name" id="current-unit-pill">BANANAS</div>
+          </div>
+          <div id="unit-icon-large" style="font-size: 2.5rem;">🍌</div>
+        </div>
+
+        <div style="padding: 0.5rem 0;">
+          <div class="primary-number" id="primary-distance-val">0.0</div>
+          <div
+            style="font-size: 0.85rem; font-weight: 900; text-transform: uppercase; color: #666; margin-top: 0.35rem;"
+            id="primary-sub-label">
+            ZERO DISTANCE DETECTED
           </div>
         </div>
 
-        <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
-          <div class="status-badge" id="gps-status-badge">
-            <span class="status-dot" id="gps-status-dot"></span>
-            <span id="gps-status-text">GPS: READY</span>
+        <!-- Auxiliary Journey Metrics -->
+        <div class="meta-stats-row">
+          <div class="meta-stat-item">
+            <div class="meta-stat-label">EXPEDITION TIME</div>
+            <div class="meta-stat-val" id="timer-val">00:00:00</div>
           </div>
-
-          <button class="brutal-btn btn-sm btn-white" id="info-btn" title="About & Formulas">❓ INFO</button>
-        </div>
-      </header>
-
-      <!-- Unit Selector Bar -->
-      <div class="brutal-card" style="padding: 0.85rem 1.25rem;">
-        <div class="unit-selector-wrapper">
-          <label for="unit-select" class="unit-label">📏 SELECT UNCONVENTIONAL UNIT OF MEASUREMENT:</label>
-          <select id="unit-select" class="brutal-select">
-            <option value="bananas" selected>🍌 BANANAS</option>
-            <option value="giraffes">🦒 GIRAFFES</option>
-            <option value="buses">🚌 DOUBLE-DECKER BUSES</option>
-            <option value="football_fields">🏈 FOOTBALL FIELDS</option>
-            <option value="blue_whales">🐋 BLUE WHALES</option>
-            <option value="city_blocks">🏙️ VAGUELY-SIZED CITY BLOCKS</option>
-          </select>
+          <div class="meta-stat-item">
+            <div class="meta-stat-label">TEMPO STATUS</div>
+            <div class="meta-stat-val" id="tempo-val">STATIONARY</div>
+          </div>
+          <div class="meta-stat-item">
+            <div class="meta-stat-label">UNITS EXPLORED</div>
+            <div class="meta-stat-val" id="units-explored-count">1 / 6</div>
+          </div>
         </div>
       </div>
 
-      <!-- Main Dashboard: Readout + Map -->
-      <div class="dashboard-grid">
-        <!-- Big Number Readout -->
-        <div class="readout-card" id="readout-panel">
-          <div class="readout-top">
-            <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #555;">TOTAL PHYSICAL DISTANCE COVERED</div>
-              <div class="primary-unit-name" id="current-unit-pill">BANANAS</div>
-            </div>
-            <div id="unit-icon-large" style="font-size: 2.5rem;">🍌</div>
+      <!-- Interactive Map Engine -->
+      <div class="map-wrapper" id="map-container-panel">
+        <div class="map-toolbar">
+          <div
+            style="font-size: 0.85rem; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🗺️ LEAFLET SATELLITE ENGINE</span>
+            <span style="font-size: 0.7rem; background: #000; color: #fff; padding: 0.1rem 0.4rem;">NEO-CONTRAST</span>
           </div>
-
-          <div style="padding: 0.5rem 0;">
-            <div class="primary-number" id="primary-distance-val">0.0</div>
-            <div style="font-size: 0.85rem; font-weight: 900; text-transform: uppercase; color: #666; margin-top: 0.35rem;" id="primary-sub-label">
-              ZERO DISTANCE DETECTED
-            </div>
-          </div>
-
-          <!-- Auxiliary Journey Metrics -->
-          <div class="meta-stats-row">
-            <div class="meta-stat-item">
-              <div class="meta-stat-label">EXPEDITION TIME</div>
-              <div class="meta-stat-val" id="timer-val">00:00:00</div>
-            </div>
-            <div class="meta-stat-item">
-              <div class="meta-stat-label">TEMPO STATUS</div>
-              <div class="meta-stat-val" id="tempo-val">STATIONARY</div>
-            </div>
-            <div class="meta-stat-item">
-              <div class="meta-stat-label">UNITS EXPLORED</div>
-              <div class="meta-stat-val" id="units-explored-count">1 / 6</div>
-            </div>
+          <div style="display: flex; gap: 0.4rem;">
+            <button class="brutal-btn btn-sm btn-white" id="recenter-btn">📍 RE-CENTER</button>
           </div>
         </div>
-
-        <!-- Interactive Map Engine -->
-        <div class="map-wrapper" id="map-container-panel">
-          <div class="map-toolbar">
-            <div style="font-size: 0.85rem; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 0.4rem;">
-              <span>🗺️ LEAFLET SATELLITE ENGINE</span>
-              <span style="font-size: 0.7rem; background: #000; color: #fff; padding: 0.1rem 0.4rem;">NEO-CONTRAST</span>
-            </div>
-            <div style="display: flex; gap: 0.4rem;">
-              <button class="brutal-btn btn-sm btn-white" id="recenter-btn">📍 RE-CENTER</button>
-            </div>
-          </div>
-          <div id="map"></div>
-        </div>
-      </div>
-
-      <!-- Action Controls -->
-      <div class="controls-bar" id="controls-section">
-        <div class="btn-group">
-          <button class="brutal-btn" id="start-btn">🚀 START JOURNEY</button>
-          <button class="brutal-btn btn-white" id="pause-btn" style="display: none;">⏸️ PAUSE</button>
-          <button class="brutal-btn btn-red" id="reset-btn">🔄 RESET ODYSSEY</button>
-        </div>
-
-        <div class="btn-group">
-          <button class="brutal-btn btn-yellow" id="sim-btn" title="Simulate a brisk stroll when indoors or testing without GPS hardware">
-            🕹️ SIMULATE EXPEDITION (DEMO WALK)
-          </button>
-        </div>
-      </div>
-
-      <!-- Achievements / Stamps -->
-      <section class="achievements-section" id="achievements-panel">
-        <div class="section-heading-bar">
-          <div class="section-title">
-            <span>🏆 STAMPS & TROPHIES</span>
-            <span style="font-size: 0.8rem; font-weight: 700; color: #555;">(REAL-TIME TRIGGERS)</span>
-          </div>
-          <div class="badge-counter" id="unlocked-counter">0 / 7 UNLOCKED</div>
-        </div>
-
-        <div class="achievements-grid" id="achievements-grid">
-          <!-- Dynamically populated badges -->
-        </div>
-      </section>
-    </div>
-
-    <!-- Neo-brutalist Toast Container -->
-    <div id="toast-container"></div>
-
-    <!-- Info Modal -->
-    <div class="modal-overlay" id="info-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 style="font-size: 1.3rem; font-weight: 900; text-transform: uppercase;">⚡ ABOUT HOW MANY BANANAS AWAY</h2>
-          <button class="brutal-btn btn-sm btn-red" id="close-modal-btn">✖ CLOSE</button>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-          <p>
-            <strong>How Many Bananas Away</strong> turns boring standard measurements into vibrant, humorous units of physical reality.
-          </p>
-          <div style="background: var(--warning-yellow); border: 2px solid #000; padding: 0.75rem; font-weight: bold; box-shadow: 2px 2px 0px #000;">
-            🛑 ABSOLUTE OBFUSCATION GUARANTEE:
-            <div style="font-weight: normal; margin-top: 0.25rem;">
-              Not a single metric (meter/km) or imperial (foot/mile) unit is ever presented to you. All distances are strictly translated into bananas, giraffes, football fields, and double-decker buses!
-            </div>
-          </div>
-          <h3 style="font-weight: 900; text-transform: uppercase;">Absurd Reference Scales:</h3>
-          <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem;">
-            <li>🍌 <strong>Bananas</strong> — Canonical Cavendish fruit curve standard</li>
-            <li>🦒 <strong>Giraffes</strong> — Towering savanna mammal crown-to-hoof stance</li>
-            <li>🚌 <strong>Double-Decker Buses</strong> — Classic British commuter transit bumper-to-bumper</li>
-            <li>🐋 <strong>Blue Whales</strong> — Colossal marine leviathan snout-to-tail fluke</li>
-            <li>🏙️ <strong>City Blocks</strong> — Classic downtown pedestrian quadrangle</li>
-            <li>🏈 <strong>Football Fields</strong> — Regulation championship gridiron endzone-to-endzone</li>
-          </ul>
-          <p style="font-size: 0.85rem; color: #555;">
-            Built with Web Geolocation API (Haversine formula + signal jitter filter), Leaflet.js, and pure Neo-Brutalist design.
-          </p>
-        </div>
+        <div id="map"></div>
       </div>
     </div>
 
-    <!-- Application Script -->
-    <script>
-      (function() {
-        // --- Conversion Factors (Internal Meters to Absurd Units) ---
-        // ABSOLUTELY NEVER EXPOSED TO USER OR DOM!
-        const UNIT_CONFIG = {
-          bananas: {
-            name: 'Bananas',
-            icon: '🍌',
-            factor: 0.178, // meters per banana
-            singular: 'Banana',
-            formatDecimals: 1
-          },
-          giraffes: {
-            name: 'Giraffes',
-            icon: '🦒',
-            factor: 5.0,
-            singular: 'Giraffe',
-            formatDecimals: 2
-          },
-          buses: {
-            name: 'Double-Decker Buses',
-            icon: '🚌',
-            factor: 9.5,
-            singular: 'Double-Decker Bus',
-            formatDecimals: 2
-          },
-          football_fields: {
-            name: 'Football Fields',
-            icon: '🏈',
-            factor: 100.0,
-            singular: 'Football Field',
-            formatDecimals: 3
-          },
-          blue_whales: {
-            name: 'Blue Whales',
-            icon: '🐋',
-            factor: 30.0,
-            singular: 'Blue Whale',
-            formatDecimals: 2
-          },
-          city_blocks: {
-            name: 'Vaguely-Sized City Blocks',
-            icon: '🏙️',
-            factor: 80.0,
-            singular: 'City Block',
-            formatDecimals: 2
-          }
+    <!-- Action Controls -->
+    <div class="controls-bar" id="controls-section">
+      <div class="btn-group">
+        <button class="brutal-btn" id="start-btn">🚀 START JOURNEY</button>
+        <button class="brutal-btn btn-white" id="pause-btn" style="display: none;">⏸️ PAUSE</button>
+        <button class="brutal-btn btn-red" id="reset-btn">🔄 RESET ODYSSEY</button>
+      </div>
+
+      <div class="btn-group">
+        <button class="brutal-btn btn-yellow" id="sim-btn"
+          title="Simulate a brisk stroll when indoors or testing without GPS hardware">
+          🕹️ SIMULATE EXPEDITION (DEMO WALK)
+        </button>
+      </div>
+    </div>
+
+    <!-- Achievements / Stamps -->
+    <section class="achievements-section" id="achievements-panel">
+      <div class="section-heading-bar">
+        <div class="section-title">
+          <span>🏆 STAMPS & TROPHIES</span>
+          <span style="font-size: 0.8rem; font-weight: 700; color: #555;">(REAL-TIME TRIGGERS)</span>
+        </div>
+        <div class="badge-counter" id="unlocked-counter">0 / 7 UNLOCKED</div>
+      </div>
+
+      <div class="achievements-grid" id="achievements-grid">
+        <!-- Dynamically populated badges -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Neo-brutalist Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Info Modal -->
+  <div class="modal-overlay" id="info-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 style="font-size: 1.3rem; font-weight: 900; text-transform: uppercase;">⚡ ABOUT HOW MANY BANANAS AWAY</h2>
+        <button class="brutal-btn btn-sm btn-red" id="close-modal-btn">✖ CLOSE</button>
+      </div>
+      <div
+        style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <p>
+          <strong>How Many Bananas Away</strong> turns boring standard measurements into vibrant, humorous units of
+          physical reality.
+        </p>
+        <div
+          style="background: var(--warning-yellow); border: 2px solid #000; padding: 0.75rem; font-weight: bold; box-shadow: 2px 2px 0px #000;">
+          🛑 ABSOLUTE OBFUSCATION GUARANTEE:
+          <div style="font-weight: normal; margin-top: 0.25rem;">
+            Not a single metric (meter/km) or imperial (foot/mile) unit is ever presented to you. All distances are
+            strictly translated into bananas, giraffes, football fields, and double-decker buses!
+          </div>
+        </div>
+        <h3 style="font-weight: 900; text-transform: uppercase;">Absurd Reference Scales:</h3>
+        <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem;">
+          <li>🍌 <strong>Bananas</strong> — Canonical Cavendish fruit curve standard</li>
+          <li>🦒 <strong>Giraffes</strong> — Towering savanna mammal crown-to-hoof stance</li>
+          <li>🚌 <strong>Double-Decker Buses</strong> — Classic British commuter transit bumper-to-bumper</li>
+          <li>🐋 <strong>Blue Whales</strong> — Colossal marine leviathan snout-to-tail fluke</li>
+          <li>🏙️ <strong>City Blocks</strong> — Classic downtown pedestrian quadrangle</li>
+          <li>🏈 <strong>Football Fields</strong> — Regulation championship gridiron endzone-to-endzone</li>
+        </ul>
+        <p style="font-size: 0.85rem; color: #555;">
+          Built with Web Geolocation API (Haversine formula + signal jitter filter), Leaflet.js, and pure Neo-Brutalist
+          design.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Script -->
+  <script>
+    (function () {
+      // --- Conversion Factors (Internal Meters to Absurd Units) ---
+      // ABSOLUTELY NEVER EXPOSED TO USER OR DOM!
+      const UNIT_CONFIG = {
+        bananas: {
+          name: 'Bananas',
+          icon: '🍌',
+          factor: 0.178, // meters per banana
+          singular: 'Banana',
+          formatDecimals: 1
+        },
+        giraffes: {
+          name: 'Giraffes',
+          icon: '🦒',
+          factor: 5.0,
+          singular: 'Giraffe',
+          formatDecimals: 2
+        },
+        buses: {
+          name: 'Double-Decker Buses',
+          icon: '🚌',
+          factor: 9.5,
+          singular: 'Double-Decker Bus',
+          formatDecimals: 2
+        },
+        football_fields: {
+          name: 'Football Fields',
+          icon: '🏈',
+          factor: 100.0,
+          singular: 'Football Field',
+          formatDecimals: 3
+        },
+        blue_whales: {
+          name: 'Blue Whales',
+          icon: '🐋',
+          factor: 30.0,
+          singular: 'Blue Whale',
+          formatDecimals: 2
+        },
+        city_blocks: {
+          name: 'Vaguely-Sized City Blocks',
+          icon: '🏙️',
+          factor: 80.0,
+          singular: 'City Block',
+          formatDecimals: 2
+        }
+      };
+
+      // --- Achievement Definitions ---
+      const ACHIEVEMENTS = [
+        {
+          id: 'maiden_voyage',
+          title: 'Maiden Expedition',
+          desc: 'Commenced your very first absurd journey.',
+          icon: '🚀',
+          unlocked: false
+        },
+        {
+          id: 'first_steps',
+          title: 'First Steps',
+          desc: 'Traversed a modest base threshold of distance.',
+          icon: '👣',
+          unlocked: false
+        },
+        {
+          id: 'unit_collector',
+          title: 'Unit Collector',
+          desc: 'Switched between 3 distinct units during a single journey.',
+          icon: '🔄',
+          unlocked: false
+        },
+        {
+          id: 'absurd_polyglot',
+          title: 'Absurd Polyglot',
+          desc: 'Cycled through every single absurd unit of measurement.',
+          icon: '🎓',
+          unlocked: false
+        },
+        {
+          id: 'globe_trotter',
+          title: 'Globe Trotter',
+          desc: 'Crushed a significant long-distance milestone.',
+          icon: '🌍',
+          unlocked: false
+        },
+        {
+          id: 'marathoner',
+          title: 'Marathoner',
+          desc: 'Maintained continuous locomotion for 3 minutes.',
+          icon: '🏃',
+          unlocked: false
+        },
+        {
+          id: 'couch_potato',
+          title: 'Couch Potato',
+          desc: 'Remained completely motionless for 45+ seconds.',
+          icon: '🥔',
+          unlocked: false
+        }
+      ];
+
+      // --- State ---
+      let trackingActive = false;
+      let isPaused = false;
+      let watchId = null;
+      let totalInternalMeters = 0;
+      let lastPosition = null;
+      let routeCoordinates = [];
+      let selectedUnitKey = 'bananas';
+      let appInitialized = false;
+
+      // Timer and Motion State
+      let timerInterval = null;
+      let journeySeconds = 0;
+      let continuousMovingSeconds = 0;
+      let stationarySeconds = 0;
+      let lastMoveTimestamp = Date.now();
+      let testedUnits = new Set(['bananas']);
+      let journeyUnitsTested = new Set(['bananas']);
+
+      // Simulation Mode
+      let isSimulating = false;
+      let simInterval = null;
+      let simCurrentLat = 51.505;
+      let simCurrentLng = -0.09;
+      let simHeading = 0;
+
+      // Leaflet references
+      let map = null;
+      let polyline = null;
+      let marker = null;
+      let startMarker = null;
+
+      // --- Audio Synthesizer (Web Audio API) for Fanfare ---
+      function playChime() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          const ctx = new AudioContext();
+
+          const now = ctx.currentTime;
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+            gain.gain.setValueAtTime(0.15, now + idx * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.1);
+            osc.stop(now + idx * 0.1 + 0.4);
+          });
+        } catch (e) {
+          // Audio context blocked or unsupported
+        }
+      }
+
+      // --- Haversine Formula (Meters Internal) ---
+      function computeHaversineMeters(lat1, lon1, lat2, lon2) {
+        const R = 6371000;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      }
+
+      // --- DOM Elements ---
+      const unitSelect = document.getElementById('unit-select');
+      const primaryValEl = document.getElementById('primary-distance-val');
+      const primaryUnitPill = document.getElementById('current-unit-pill');
+      const unitIconLarge = document.getElementById('unit-icon-large');
+      const primarySubLabel = document.getElementById('primary-sub-label');
+      const timerVal = document.getElementById('timer-val');
+      const tempoVal = document.getElementById('tempo-val');
+      const unitsExploredCount = document.getElementById('units-explored-count');
+      const unlockedCounter = document.getElementById('unlocked-counter');
+      const achievementsGrid = document.getElementById('achievements-grid');
+      const startBtn = document.getElementById('start-btn');
+      const pauseBtn = document.getElementById('pause-btn');
+      const resetBtn = document.getElementById('reset-btn');
+      const simBtn = document.getElementById('sim-btn');
+      const recenterBtn = document.getElementById('recenter-btn');
+      const gpsStatusBadge = document.getElementById('gps-status-badge');
+      const gpsStatusDot = document.getElementById('gps-status-dot');
+      const gpsStatusText = document.getElementById('gps-status-text');
+      const toastContainer = document.getElementById('toast-container');
+      const infoBtn = document.getElementById('info-btn');
+      const infoModal = document.getElementById('info-modal');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+
+      // --- Initialize Map ---
+      function initMap() {
+        // Default center (e.g. Greenwich London or Fallback)
+        const defaultCenter = [51.505, -0.09];
+        map = L.map('map', {
+          zoomControl: true,
+          attributionControl: false
+        }).setView(defaultCenter, 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19
+        }).addTo(map);
+
+        // Add a subtle bottom attribution in neo-brutalist style
+        const customAttrib = L.control({ position: 'bottomright' });
+        customAttrib.onAdd = function () {
+          const div = L.DomUtil.create('div', 'custom-attrib');
+          div.style.background = '#000';
+          div.style.color = '#fff';
+          div.style.fontSize = '10px';
+          div.style.padding = '2px 6px';
+          div.style.fontWeight = 'bold';
+          div.innerHTML = '© OpenStreetMap | How Many Bananas Away';
+          return div;
         };
+        customAttrib.addTo(map);
 
-        // --- Achievement Definitions ---
-        const ACHIEVEMENTS = [
-          {
-            id: 'maiden_voyage',
-            title: 'Maiden Expedition',
-            desc: 'Commenced your very first absurd journey.',
-            icon: '🚀',
-            unlocked: false
-          },
-          {
-            id: 'first_steps',
-            title: 'First Steps',
-            desc: 'Traversed a modest base threshold of distance.',
-            icon: '👣',
-            unlocked: false
-          },
-          {
-            id: 'unit_collector',
-            title: 'Unit Collector',
-            desc: 'Switched between 3 distinct units during a single journey.',
-            icon: '🔄',
-            unlocked: false
-          },
-          {
-            id: 'absurd_polyglot',
-            title: 'Absurd Polyglot',
-            desc: 'Cycled through every single absurd unit of measurement.',
-            icon: '🎓',
-            unlocked: false
-          },
-          {
-            id: 'globe_trotter',
-            title: 'Globe Trotter',
-            desc: 'Crushed a significant long-distance milestone.',
-            icon: '🌍',
-            unlocked: false
-          },
-          {
-            id: 'marathoner',
-            title: 'Marathoner',
-            desc: 'Maintained continuous locomotion for 3 minutes.',
-            icon: '🏃',
-            unlocked: false
-          },
-          {
-            id: 'couch_potato',
-            title: 'Couch Potato',
-            desc: 'Remained completely motionless for 45+ seconds.',
-            icon: '🥔',
-            unlocked: false
-          }
-        ];
+        // Route polyline with thick 5px black stroke
+        polyline = L.polyline([], {
+          color: '#000000',
+          weight: 5,
+          opacity: 1,
+          lineJoin: 'round',
+          lineCap: 'square'
+        }).addTo(map);
 
-        // --- State ---
-        let trackingActive = false;
-        let isPaused = false;
-        let watchId = null;
-        let totalInternalMeters = 0;
-        let lastPosition = null;
-        let routeCoordinates = [];
-        let selectedUnitKey = 'bananas';
-        
-        // Timer and Motion State
-        let timerInterval = null;
-        let journeySeconds = 0;
-        let continuousMovingSeconds = 0;
-        let stationarySeconds = 0;
-        let lastMoveTimestamp = Date.now();
-        let testedUnits = new Set(['bananas']);
-        let journeyUnitsTested = new Set(['bananas']);
-
-        // Simulation Mode
-        let isSimulating = false;
-        let simInterval = null;
-        let simCurrentLat = 51.505;
-        let simCurrentLng = -0.09;
-        let simHeading = 0;
-
-        // Leaflet references
-        let map = null;
-        let polyline = null;
-        let marker = null;
-        let startMarker = null;
-
-        // --- Audio Synthesizer (Web Audio API) for Fanfare ---
-        function playChime() {
-          try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            const ctx = new AudioContext();
-            
-            const now = ctx.currentTime;
-            const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-            notes.forEach((freq, idx) => {
-              const osc = ctx.createOscillator();
-              const gain = ctx.createGain();
-              osc.type = 'triangle';
-              osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-              gain.gain.setValueAtTime(0.15, now + idx * 0.1);
-              gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.35);
-              osc.connect(gain);
-              gain.connect(ctx.destination);
-              osc.start(now + idx * 0.1);
-              osc.stop(now + idx * 0.1 + 0.4);
-            });
-          } catch(e) {
-            // Audio context blocked or unsupported
-          }
+        // Prompt user for actual GPS to center immediately if allowed
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const lat = pos.coords.latitude;
+              const lng = pos.coords.longitude;
+              map.setView([lat, lng], 17);
+              simCurrentLat = lat;
+              simCurrentLng = lng;
+              updateMarker(lat, lng);
+              setGpsStatus('ready', 'GPS: LOCKED');
+            },
+            (err) => {
+              setGpsStatus('ready', 'GPS: READY');
+            },
+            { enableHighAccuracy: true, timeout: 5000 }
+          );
         }
 
-        // --- Haversine Formula (Meters Internal) ---
-        function computeHaversineMeters(lat1, lon1, lat2, lon2) {
-          const R = 6371000;
-          const dLat = (lat2 - lat1) * Math.PI / 180;
-          const dLon = (lon2 - lon1) * Math.PI / 180;
-          const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          return R * c;
-        }
+        setTimeout(() => {
+          if (map) map.invalidateSize();
+        }, 300);
 
-        // --- DOM Elements ---
-        const unitSelect = document.getElementById('unit-select');
-        const primaryValEl = document.getElementById('primary-distance-val');
-        const primaryUnitPill = document.getElementById('current-unit-pill');
-        const unitIconLarge = document.getElementById('unit-icon-large');
-        const primarySubLabel = document.getElementById('primary-sub-label');
-        const timerVal = document.getElementById('timer-val');
-        const tempoVal = document.getElementById('tempo-val');
-        const unitsExploredCount = document.getElementById('units-explored-count');
-        const unlockedCounter = document.getElementById('unlocked-counter');
-        const achievementsGrid = document.getElementById('achievements-grid');
-        const startBtn = document.getElementById('start-btn');
-        const pauseBtn = document.getElementById('pause-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const simBtn = document.getElementById('sim-btn');
-        const recenterBtn = document.getElementById('recenter-btn');
-        const gpsStatusBadge = document.getElementById('gps-status-badge');
-        const gpsStatusDot = document.getElementById('gps-status-dot');
-        const gpsStatusText = document.getElementById('gps-status-text');
-        const toastContainer = document.getElementById('toast-container');
-        const infoBtn = document.getElementById('info-btn');
-        const infoModal = document.getElementById('info-modal');
-        const closeModalBtn = document.getElementById('close-modal-btn');
+        window.addEventListener('resize', () => {
+          if (map) map.invalidateSize();
+        });
+      }
 
-        // --- Initialize Map ---
-        function initMap() {
-          // Default center (e.g. Greenwich London or Fallback)
-          const defaultCenter = [51.505, -0.09];
-          map = L.map('map', {
-            zoomControl: true,
-            attributionControl: false
-          }).setView(defaultCenter, 16);
-
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19
-          }).addTo(map);
-
-          // Add a subtle bottom attribution in neo-brutalist style
-          const customAttrib = L.control({ position: 'bottomright' });
-          customAttrib.onAdd = function() {
-            const div = L.DomUtil.create('div', 'custom-attrib');
-            div.style.background = '#000';
-            div.style.color = '#fff';
-            div.style.fontSize = '10px';
-            div.style.padding = '2px 6px';
-            div.style.fontWeight = 'bold';
-            div.innerHTML = '© OpenStreetMap | How Many Bananas Away';
-            return div;
-          };
-          customAttrib.addTo(map);
-
-          // Route polyline with thick 5px black stroke
-          polyline = L.polyline([], {
-            color: '#000000',
-            weight: 5,
-            opacity: 1,
-            lineJoin: 'round',
-            lineCap: 'square'
-          }).addTo(map);
-
-          // Prompt user for actual GPS to center immediately if allowed
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                map.setView([lat, lng], 17);
-                simCurrentLat = lat;
-                simCurrentLng = lng;
-                updateMarker(lat, lng);
-                setGpsStatus('ready', 'GPS: LOCKED');
-              },
-              (err) => {
-                setGpsStatus('ready', 'GPS: READY');
-              },
-              { enableHighAccuracy: true, timeout: 5000 }
-            );
-          }
-
-          setTimeout(() => {
-            if (map) map.invalidateSize();
-          }, 300);
-
-          window.addEventListener('resize', () => {
-            if (map) map.invalidateSize();
+      // --- Custom Marker Handler ---
+      function updateMarker(lat, lng) {
+        const latLng = [lat, lng];
+        if (!marker) {
+          const customIcon = L.divIcon({
+            className: 'custom-pulse-marker',
+            html: '<div class="pulse-marker"></div>',
+            iconSize: [22, 22],
+            iconAnchor: [11, 11]
           });
+          marker = L.marker(latLng, { icon: customIcon }).addTo(map);
+        } else {
+          marker.setLatLng(latLng);
         }
+      }
 
-        // --- Custom Marker Handler ---
-        function updateMarker(lat, lng) {
-          const latLng = [lat, lng];
-          if (!marker) {
-            const customIcon = L.divIcon({
-              className: 'custom-pulse-marker',
-              html: '<div class="pulse-marker"></div>',
-              iconSize: [22, 22],
-              iconAnchor: [11, 11]
-            });
-            marker = L.marker(latLng, { icon: customIcon }).addTo(map);
-          } else {
-            marker.setLatLng(latLng);
-          }
+      function setStartMarker(lat, lng) {
+        if (startMarker) {
+          map.removeLayer(startMarker);
         }
+        const startIcon = L.divIcon({
+          className: 'start-flag-marker',
+          html: '<div style="background:#00E676; border:3px solid #000; font-size:12px; font-weight:900; padding:2px 4px; box-shadow:2px 2px 0px #000;">START</div>',
+          iconSize: [46, 22],
+          iconAnchor: [23, 22]
+        });
+        startMarker = L.marker([lat, lng], { icon: startIcon }).addTo(map);
+      }
 
-        function setStartMarker(lat, lng) {
-          if (startMarker) {
-            map.removeLayer(startMarker);
-          }
-          const startIcon = L.divIcon({
-            className: 'start-flag-marker',
-            html: '<div style="background:#00E676; border:3px solid #000; font-size:12px; font-weight:900; padding:2px 4px; box-shadow:2px 2px 0px #000;">START</div>',
-            iconSize: [46, 22],
-            iconAnchor: [23, 22]
-          });
-          startMarker = L.marker([lat, lng], { icon: startIcon }).addTo(map);
+      // --- GPS Status Indicator ---
+      function setGpsStatus(state, message) {
+        gpsStatusDot.className = 'status-dot';
+        if (state === 'active') gpsStatusDot.classList.add('active');
+        else if (state === 'simulating') gpsStatusDot.classList.add('simulating');
+        else if (state === 'searching') gpsStatusDot.classList.add('searching');
+        gpsStatusText.textContent = message;
+      }
+
+      // --- Absurd Value Formatting ---
+      function formatAbsurdNumber(val, unitKey) {
+        const conf = UNIT_CONFIG[unitKey];
+        if (val === 0) return '0.0';
+        if (val < 0.01) return val.toFixed(3);
+        if (val < 10) return val.toFixed(conf.formatDecimals);
+        if (val < 1000) return val.toFixed(Math.max(1, conf.formatDecimals - 1));
+        return Math.round(val).toLocaleString();
+      }
+
+      // --- Render UI Readout ---
+      function renderReadout() {
+        const unit = UNIT_CONFIG[selectedUnitKey];
+        const absurdVal = totalInternalMeters / unit.factor;
+
+        primaryValEl.textContent = formatAbsurdNumber(absurdVal, selectedUnitKey);
+        primaryUnitPill.textContent = unit.name.toUpperCase();
+        unitIconLarge.textContent = unit.icon;
+
+        if (totalInternalMeters === 0) {
+          primarySubLabel.textContent = "ZERO MOVEMENT RECORDED";
+        } else if (absurdVal >= 1) {
+          primarySubLabel.textContent = `${unit.name.toUpperCase()} COVERED IN REALITY`;
+        } else {
+          primarySubLabel.textContent = `FRACTION OF A ${unit.singular.toUpperCase()}`;
         }
+      }
 
-        // --- GPS Status Indicator ---
-        function setGpsStatus(state, message) {
-          gpsStatusDot.className = 'status-dot';
-          if (state === 'active') gpsStatusDot.classList.add('active');
-          else if (state === 'simulating') gpsStatusDot.classList.add('simulating');
-          else if (state === 'searching') gpsStatusDot.classList.add('searching');
-          gpsStatusText.textContent = message;
-        }
+      // --- Render Achievements Grid ---
+      function renderAchievements() {
+        achievementsGrid.innerHTML = '';
+        let unlockedCount = 0;
 
-        // --- Absurd Value Formatting ---
-        function formatAbsurdNumber(val, unitKey) {
-          const conf = UNIT_CONFIG[unitKey];
-          if (val === 0) return '0.0';
-          if (val < 0.01) return val.toFixed(3);
-          if (val < 10) return val.toFixed(conf.formatDecimals);
-          if (val < 1000) return val.toFixed(Math.max(1, conf.formatDecimals - 1));
-          return Math.round(val).toLocaleString();
-        }
+        ACHIEVEMENTS.forEach(ach => {
+          if (ach.unlocked) unlockedCount++;
 
-        // --- Render UI Readout ---
-        function renderReadout() {
-          const unit = UNIT_CONFIG[selectedUnitKey];
-          const absurdVal = totalInternalMeters / unit.factor;
+          const card = document.createElement('div');
+          card.className = `achievement-card ${ach.unlocked ? 'unlocked' : 'locked'}`;
+          card.id = `badge-${ach.id}`;
 
-          primaryValEl.textContent = formatAbsurdNumber(absurdVal, selectedUnitKey);
-          primaryUnitPill.textContent = unit.name.toUpperCase();
-          unitIconLarge.textContent = unit.icon;
-
-          if (totalInternalMeters === 0) {
-            primarySubLabel.textContent = "ZERO MOVEMENT RECORDED";
-          } else if (absurdVal >= 1) {
-            primarySubLabel.textContent = `${unit.name.toUpperCase()} COVERED IN REALITY`;
-          } else {
-            primarySubLabel.textContent = `FRACTION OF A ${unit.singular.toUpperCase()}`;
-          }
-        }
-
-        // --- Render Achievements Grid ---
-        function renderAchievements() {
-          achievementsGrid.innerHTML = '';
-          let unlockedCount = 0;
-
-          ACHIEVEMENTS.forEach(ach => {
-            if (ach.unlocked) unlockedCount++;
-
-            const card = document.createElement('div');
-            card.className = `achievement-card ${ach.unlocked ? 'unlocked' : 'locked'}`;
-            card.id = `badge-${ach.id}`;
-
-            card.innerHTML = `
+          card.innerHTML = `
               <div class="ach-header">
                 <span class="ach-icon">${ach.icon}</span>
                 <span class="ach-stamp">${ach.unlocked ? 'STAMPED' : 'LOCKED'}</span>
@@ -1111,361 +1142,368 @@
               <div class="ach-name">${ach.title}</div>
               <div class="ach-desc">${ach.desc}</div>
             `;
-            achievementsGrid.appendChild(card);
-          });
+          achievementsGrid.appendChild(card);
+        });
 
-          unlockedCounter.textContent = `${unlockedCount} / ${ACHIEVEMENTS.length} UNLOCKED`;
-        }
+        unlockedCounter.textContent = `${unlockedCount} / ${ACHIEVEMENTS.length} UNLOCKED`;
+      }
 
-        // --- Unlock Achievement & Display Toast ---
-        function unlockAchievement(id) {
-          const ach = ACHIEVEMENTS.find(a => a.id === id);
-          if (!ach || ach.unlocked) return;
+      // --- Unlock Achievement & Display Toast ---
+      function unlockAchievement(id) {
+        const ach = ACHIEVEMENTS.find(a => a.id === id);
+        if (!ach || ach.unlocked) return;
 
-          ach.unlocked = true;
-          renderAchievements();
-          playChime();
+        ach.unlocked = true;
+        renderAchievements();
+        playChime();
 
-          // Spawn Neo-Brutalist Toast
-          const toast = document.createElement('div');
-          toast.className = 'brutal-toast';
-          toast.innerHTML = `
+        // Spawn Neo-Brutalist Toast
+        const toast = document.createElement('div');
+        toast.className = 'brutal-toast';
+        toast.innerHTML = `
             <div class="toast-header">
               <span>🏆 BADGE UNLOCKED!</span>
             </div>
             <div class="toast-title">${ach.icon} ${ach.title}</div>
             <div class="toast-desc">${ach.desc}</div>
           `;
-          toastContainer.appendChild(toast);
+        toastContainer.appendChild(toast);
 
+        setTimeout(() => {
+          toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(15px)';
           setTimeout(() => {
-            toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(15px)';
-            setTimeout(() => {
-              if (toast.parentNode) toast.parentNode.removeChild(toast);
-            }, 350);
-          }, 4500);
-        }
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+          }, 350);
+        }, 4500);
+      }
 
-        // --- Check Achievements Criteria ---
-        function checkAchievements() {
-          // 1. Maiden Voyage
-          if (trackingActive) {
-            unlockAchievement('maiden_voyage');
-          }
-
-          // 2. First Steps (internal threshold ~10 meters = ~56 bananas)
-          if (totalInternalMeters >= 10) {
-            unlockAchievement('first_steps');
-          }
-
-          // 3. Globe Trotter (internal milestone ~500 meters)
-          if (totalInternalMeters >= 500) {
-            unlockAchievement('globe_trotter');
-          }
-
-          // 4. Unit Collector (switched between 3 distinct units)
-          if (journeyUnitsTested.size >= 3) {
-            unlockAchievement('unit_collector');
-          }
-
-          // 5. Absurd Polyglot (tried all 6 units)
-          if (testedUnits.size >= Object.keys(UNIT_CONFIG).length) {
-            unlockAchievement('absurd_polyglot');
-          }
-
-          // 6. Marathoner (continuous moving for 180s = 3 minutes)
-          if (continuousMovingSeconds >= 180) {
-            unlockAchievement('marathoner');
-          }
-
-          // 7. Couch Potato (completely still for 45s after start)
-          if (trackingActive && stationarySeconds >= 45 && totalInternalMeters < 5) {
-            unlockAchievement('couch_potato');
-          }
-        }
-
-        // --- Position Update Pipeline with Jitter Filter ---
-        function processNewPosition(lat, lng, accuracy) {
-          if (!trackingActive || isPaused) return;
-
-          const now = Date.now();
-
-          if (!lastPosition) {
-            lastPosition = { lat, lng, time: now };
-            routeCoordinates = [[lat, lng]];
-            polyline.setLatLngs(routeCoordinates);
-            setStartMarker(lat, lng);
-            updateMarker(lat, lng);
-            map.panTo([lat, lng]);
-            return;
-          }
-
-          // Compute distance delta via Haversine
-          const deltaMeters = computeHaversineMeters(lastPosition.lat, lastPosition.lng, lat, lng);
-          const deltaSeconds = (now - lastPosition.time) / 1000;
-
-          // LOW-PASS JITTER FILTER:
-          // Ignore micro-jitter below 3.2 meters to prevent stationary signal drift
-          if (deltaMeters < 3.2) {
-            // User is virtually stationary
-            tempoVal.textContent = "STATIONARY";
-            return;
-          }
-
-          // Speed check (filter extreme GPS teleport spikes > 80 m/s = 288 km/h)
-          if (deltaSeconds > 0 && (deltaMeters / deltaSeconds) > 80) {
-            return;
-          }
-
-          // Movement verified!
-          totalInternalMeters += deltaMeters;
-          lastPosition = { lat, lng, time: now };
-          lastMoveTimestamp = now;
-
-          // Determine tempo without metric values
-          const speed = deltaSeconds > 0 ? deltaMeters / deltaSeconds : 0;
-          if (speed > 4.5) {
-            tempoVal.textContent = "SPRINTING";
-          } else if (speed > 1.8) {
-            tempoVal.textContent = "BRISK STRIDE";
-          } else {
-            tempoVal.textContent = "STROLLING";
-          }
-
-          // Update map route
-          routeCoordinates.push([lat, lng]);
-          polyline.setLatLngs(routeCoordinates);
-          updateMarker(lat, lng);
-
-          // Update UI and trigger achievements
-          renderReadout();
-          checkAchievements();
-        }
-
-        // --- Geolocation Tracking Lifecycle ---
-        function startTracking() {
-          if (trackingActive) return;
-
-          trackingActive = true;
-          isPaused = false;
-          startBtn.style.display = 'none';
-          pauseBtn.style.display = 'inline-flex';
-          pauseBtn.textContent = '⏸️ PAUSE';
-          setGpsStatus('searching', 'SEARCHING GPS...');
-
+      // --- Check Achievements Criteria ---
+      function checkAchievements() {
+        // 1. Maiden Voyage
+        if (trackingActive) {
           unlockAchievement('maiden_voyage');
+        }
 
-          // Start Timer
-          startTimer();
+        // 2. First Steps (internal threshold ~10 meters = ~56 bananas)
+        if (totalInternalMeters >= 10) {
+          unlockAchievement('first_steps');
+        }
 
-          if (!navigator.geolocation) {
-            setGpsStatus('ready', 'NO GPS HARDWARE');
-            alert('Geolocation is not supported by your browser. You can use the "Simulate Expedition" mode to test!');
-            return;
-          }
+        // 3. Globe Trotter (internal milestone ~500 meters)
+        if (totalInternalMeters >= 500) {
+          unlockAchievement('globe_trotter');
+        }
 
-          watchId = navigator.geolocation.watchPosition(
-            (pos) => {
-              setGpsStatus('active', 'GPS: LOCKED (STRONG)');
-              processNewPosition(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy);
-            },
-            (err) => {
-              console.warn('Geolocation error:', err.message);
-              if (err.code === 1) {
-                setGpsStatus('ready', 'GPS: PERMISSION DENIED');
-              } else {
-                setGpsStatus('ready', 'GPS: ACQUIRING...');
-              }
-            },
-            {
-              enableHighAccuracy: true,
-              maximumAge: 0,
-              timeout: 12000
+        // 4. Unit Collector (switched between 3 distinct units)
+        if (journeyUnitsTested.size >= 3) {
+          unlockAchievement('unit_collector');
+        }
+
+        // 5. Absurd Polyglot (tried all 6 units)
+        if (testedUnits.size >= Object.keys(UNIT_CONFIG).length) {
+          unlockAchievement('absurd_polyglot');
+        }
+
+        // 6. Marathoner (continuous moving for 180s = 3 minutes)
+        if (continuousMovingSeconds >= 180) {
+          unlockAchievement('marathoner');
+        }
+
+        // 7. Couch Potato (completely still for 45s after start)
+        if (trackingActive && stationarySeconds >= 45 && totalInternalMeters < 5) {
+          unlockAchievement('couch_potato');
+        }
+      }
+
+      // --- Position Update Pipeline with Jitter Filter ---
+      function processNewPosition(lat, lng, accuracy) {
+        if (!trackingActive || isPaused) return;
+
+        const now = Date.now();
+
+        if (typeof accuracy === 'number' && accuracy > 80) {
+          setGpsStatus('searching', 'GPS: LOW ACCURACY');
+          return;
+        }
+
+        if (!lastPosition) {
+          lastPosition = { lat, lng, time: now, accuracy };
+          routeCoordinates = [[lat, lng]];
+          polyline.setLatLngs(routeCoordinates);
+          setStartMarker(lat, lng);
+          updateMarker(lat, lng);
+          map.panTo([lat, lng], { animate: true, duration: 0.6 });
+          return;
+        }
+
+        // Compute distance delta via Haversine
+        const deltaMeters = computeHaversineMeters(lastPosition.lat, lastPosition.lng, lat, lng);
+        const deltaSeconds = (now - lastPosition.time) / 1000;
+        const effectiveAccuracy = Number.isFinite(accuracy) ? accuracy : 25;
+
+        // Ignore micro-jitter and low-confidence position drift to keep GPS tracking accurate.
+        if (deltaMeters < 2 || (effectiveAccuracy > 30 && deltaMeters < 8)) {
+          tempoVal.textContent = "STATIONARY";
+          return;
+        }
+
+        // Speed check (filter extreme GPS teleport spikes > 80 m/s = 288 km/h)
+        if (deltaSeconds > 0 && (deltaMeters / deltaSeconds) > 80) {
+          return;
+        }
+
+        // Movement verified!
+        totalInternalMeters += deltaMeters;
+        lastPosition = { lat, lng, time: now, accuracy: effectiveAccuracy };
+        lastMoveTimestamp = now;
+
+        // Determine tempo without metric values
+        const speed = deltaSeconds > 0 ? deltaMeters / deltaSeconds : 0;
+        if (speed > 4.5) {
+          tempoVal.textContent = "SPRINTING";
+        } else if (speed > 1.8) {
+          tempoVal.textContent = "BRISK STRIDE";
+        } else {
+          tempoVal.textContent = "STROLLING";
+        }
+
+        // Update map route
+        routeCoordinates.push([lat, lng]);
+        polyline.setLatLngs(routeCoordinates);
+        updateMarker(lat, lng);
+        map.panTo([lat, lng], { animate: true, duration: 0.4 });
+
+        // Update UI and trigger achievements
+        renderReadout();
+        checkAchievements();
+      }
+
+      // --- Geolocation Tracking Lifecycle ---
+      function startTracking() {
+        if (trackingActive) return;
+
+        trackingActive = true;
+        isPaused = false;
+        startBtn.style.display = 'none';
+        pauseBtn.style.display = 'inline-flex';
+        pauseBtn.textContent = '⏸️ PAUSE';
+        setGpsStatus('searching', 'SEARCHING GPS...');
+
+        unlockAchievement('maiden_voyage');
+
+        // Start Timer
+        startTimer();
+
+        if (!navigator.geolocation) {
+          setGpsStatus('ready', 'NO GPS HARDWARE');
+          alert('Geolocation is not supported by your browser. You can use the "Simulate Expedition" mode to test!');
+          return;
+        }
+
+        watchId = navigator.geolocation.watchPosition(
+          (pos) => {
+            setGpsStatus('active', 'GPS: LOCKED (STRONG)');
+            processNewPosition(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy);
+          },
+          (err) => {
+            console.warn('Geolocation error:', err.message);
+            if (err.code === 1) {
+              setGpsStatus('ready', 'GPS: PERMISSION DENIED');
+            } else {
+              setGpsStatus('ready', 'GPS: ACQUIRING...');
             }
-          );
+          },
+          {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 12000
+          }
+        );
+      }
+
+      function pauseTracking() {
+        if (!trackingActive) return;
+
+        isPaused = !isPaused;
+        if (isPaused) {
+          pauseBtn.textContent = '▶️ RESUME';
+          pauseBtn.className = 'brutal-btn btn-yellow';
+          tempoVal.textContent = 'PAUSED';
+          setGpsStatus('ready', 'EXPEDITION PAUSED');
+        } else {
+          pauseBtn.textContent = '⏸️ PAUSE';
+          pauseBtn.className = 'brutal-btn btn-white';
+          setGpsStatus(isSimulating ? 'simulating' : 'active', isSimulating ? 'SIMULATING' : 'GPS: LOCKED');
+        }
+      }
+
+      function resetJourney() {
+        // Stop watchers
+        if (watchId !== null) {
+          navigator.geolocation.clearWatch(watchId);
+          watchId = null;
+        }
+        stopSimulation();
+
+        trackingActive = false;
+        isPaused = false;
+        totalInternalMeters = 0;
+        lastPosition = null;
+        routeCoordinates = [];
+        journeySeconds = 0;
+        continuousMovingSeconds = 0;
+        stationarySeconds = 0;
+        journeyUnitsTested = new Set([selectedUnitKey]);
+
+        // Clear map lines
+        if (polyline) polyline.setLatLngs([]);
+        if (startMarker) {
+          map.removeLayer(startMarker);
+          startMarker = null;
         }
 
-        function pauseTracking() {
-          if (!trackingActive) return;
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerVal.textContent = '00:00:00';
+        tempoVal.textContent = 'STATIONARY';
 
-          isPaused = !isPaused;
-          if (isPaused) {
-            pauseBtn.textContent = '▶️ RESUME';
-            pauseBtn.className = 'brutal-btn btn-yellow';
-            tempoVal.textContent = 'PAUSED';
-            setGpsStatus('ready', 'EXPEDITION PAUSED');
+        startBtn.style.display = 'inline-flex';
+        pauseBtn.style.display = 'none';
+        setGpsStatus('ready', 'GPS: READY');
+
+        renderReadout();
+      }
+
+      // --- Active Timer & Motion Chronometer ---
+      function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        lastMoveTimestamp = Date.now();
+
+        timerInterval = setInterval(() => {
+          if (isPaused) return;
+
+          journeySeconds++;
+          const hrs = String(Math.floor(journeySeconds / 3600)).padStart(2, '0');
+          const mins = String(Math.floor((journeySeconds % 3600) / 60)).padStart(2, '0');
+          const secs = String(journeySeconds % 60).padStart(2, '0');
+          timerVal.textContent = `${hrs}:${mins}:${secs}`;
+
+          // Check motion delta
+          const timeSinceMove = (Date.now() - lastMoveTimestamp) / 1000;
+          if (timeSinceMove < 3.5 && totalInternalMeters > 0) {
+            continuousMovingSeconds++;
           } else {
-            pauseBtn.textContent = '⏸️ PAUSE';
-            pauseBtn.className = 'brutal-btn btn-white';
-            setGpsStatus(isSimulating ? 'simulating' : 'active', isSimulating ? 'SIMULATING' : 'GPS: LOCKED');
+            continuousMovingSeconds = 0;
+            stationarySeconds++;
           }
-        }
 
-        function resetJourney() {
-          // Stop watchers
-          if (watchId !== null) {
-            navigator.geolocation.clearWatch(watchId);
-            watchId = null;
-          }
+          checkAchievements();
+        }, 1000);
+      }
+
+      // --- Demo Walk Simulator (for desktop/indoor testing) ---
+      function toggleSimulation() {
+        if (isSimulating) {
           stopSimulation();
-
-          trackingActive = false;
-          isPaused = false;
-          totalInternalMeters = 0;
-          lastPosition = null;
-          routeCoordinates = [];
-          journeySeconds = 0;
-          continuousMovingSeconds = 0;
-          stationarySeconds = 0;
-          journeyUnitsTested = new Set([selectedUnitKey]);
-
-          // Clear map lines
-          if (polyline) polyline.setLatLngs([]);
-          if (startMarker) {
-            map.removeLayer(startMarker);
-            startMarker = null;
-          }
-
-          clearInterval(timerInterval);
-          timerInterval = null;
-          timerVal.textContent = '00:00:00';
-          tempoVal.textContent = 'STATIONARY';
-
-          startBtn.style.display = 'inline-flex';
-          pauseBtn.style.display = 'none';
+          simBtn.textContent = '🕹️ SIMULATE EXPEDITION (DEMO WALK)';
+          simBtn.className = 'brutal-btn btn-yellow';
           setGpsStatus('ready', 'GPS: READY');
+        } else {
+          // Start journey if not already active
+          if (!trackingActive) {
+            startTracking();
+          }
+          isSimulating = true;
+          simBtn.textContent = '🛑 STOP SIMULATION';
+          simBtn.className = 'brutal-btn btn-red';
+          setGpsStatus('simulating', 'GPS: SIMULATING');
 
-          renderReadout();
-        }
+          // Set simulated origin to map center or London
+          const center = map.getCenter();
+          simCurrentLat = center.lat;
+          simCurrentLng = center.lng;
 
-        // --- Active Timer & Motion Chronometer ---
-        function startTimer() {
-          if (timerInterval) clearInterval(timerInterval);
-          lastMoveTimestamp = Date.now();
-
-          timerInterval = setInterval(() => {
+          simInterval = setInterval(() => {
             if (isPaused) return;
 
-            journeySeconds++;
-            const hrs = String(Math.floor(journeySeconds / 3600)).padStart(2, '0');
-            const mins = String(Math.floor((journeySeconds % 3600) / 60)).padStart(2, '0');
-            const secs = String(journeySeconds % 60).padStart(2, '0');
-            timerVal.textContent = `${hrs}:${mins}:${secs}`;
+            // Move slightly in random wander pattern (~4-6 meters per step)
+            simHeading += (Math.random() - 0.5) * 0.4;
+            const stepDistDeg = 0.000045; // roughly 4-5 meters
+            simCurrentLat += Math.cos(simHeading) * stepDistDeg;
+            simCurrentLng += Math.sin(simHeading) * stepDistDeg;
 
-            // Check motion delta
-            const timeSinceMove = (Date.now() - lastMoveTimestamp) / 1000;
-            if (timeSinceMove < 3.5 && totalInternalMeters > 0) {
-              continuousMovingSeconds++;
-            } else {
-              continuousMovingSeconds = 0;
-              stationarySeconds++;
-            }
-
-            checkAchievements();
-          }, 1000);
+            processNewPosition(simCurrentLat, simCurrentLng, 5);
+            map.panTo([simCurrentLat, simCurrentLng]);
+          }, 1200);
         }
+      }
 
-        // --- Demo Walk Simulator (for desktop/indoor testing) ---
-        function toggleSimulation() {
-          if (isSimulating) {
-            stopSimulation();
-            simBtn.textContent = '🕹️ SIMULATE EXPEDITION (DEMO WALK)';
-            simBtn.className = 'brutal-btn btn-yellow';
-            setGpsStatus('ready', 'GPS: READY');
-          } else {
-            // Start journey if not already active
-            if (!trackingActive) {
-              startTracking();
-            }
-            isSimulating = true;
-            simBtn.textContent = '🛑 STOP SIMULATION';
-            simBtn.className = 'brutal-btn btn-red';
-            setGpsStatus('simulating', 'GPS: SIMULATING');
-
-            // Set simulated origin to map center or London
-            const center = map.getCenter();
-            simCurrentLat = center.lat;
-            simCurrentLng = center.lng;
-
-            simInterval = setInterval(() => {
-              if (isPaused) return;
-
-              // Move slightly in random wander pattern (~4-6 meters per step)
-              simHeading += (Math.random() - 0.5) * 0.4;
-              const stepDistDeg = 0.000045; // roughly 4-5 meters
-              simCurrentLat += Math.cos(simHeading) * stepDistDeg;
-              simCurrentLng += Math.sin(simHeading) * stepDistDeg;
-
-              processNewPosition(simCurrentLat, simCurrentLng, 5);
-              map.panTo([simCurrentLat, simCurrentLng]);
-            }, 1200);
-          }
+      function stopSimulation() {
+        if (simInterval) {
+          clearInterval(simInterval);
+          simInterval = null;
         }
+        isSimulating = false;
+      }
 
-        function stopSimulation() {
-          if (simInterval) {
-            clearInterval(simInterval);
-            simInterval = null;
-          }
-          isSimulating = false;
+      // --- Unit Change Handler ---
+      unitSelect.addEventListener('change', (e) => {
+        selectedUnitKey = e.target.value;
+        testedUnits.add(selectedUnitKey);
+        journeyUnitsTested.add(selectedUnitKey);
+
+        unitsExploredCount.textContent = `${testedUnits.size} / ${Object.keys(UNIT_CONFIG).length}`;
+
+        renderReadout();
+        checkAchievements();
+      });
+
+      // --- Event Listeners ---
+      startBtn.addEventListener('click', startTracking);
+      pauseBtn.addEventListener('click', pauseTracking);
+      resetBtn.addEventListener('click', resetJourney);
+      simBtn.addEventListener('click', toggleSimulation);
+
+      recenterBtn.addEventListener('click', () => {
+        if (lastPosition) {
+          map.setView([lastPosition.lat, lastPosition.lng], 17);
+        } else {
+          map.setView(map.getCenter(), 17);
         }
+      });
 
-        // --- Unit Change Handler ---
-        unitSelect.addEventListener('change', (e) => {
-          selectedUnitKey = e.target.value;
-          testedUnits.add(selectedUnitKey);
-          journeyUnitsTested.add(selectedUnitKey);
+      infoBtn.addEventListener('click', () => {
+        infoModal.classList.add('active');
+      });
 
-          unitsExploredCount.textContent = `${testedUnits.size} / ${Object.keys(UNIT_CONFIG).length}`;
+      closeModalBtn.addEventListener('click', () => {
+        infoModal.classList.remove('active');
+      });
 
-          renderReadout();
-          checkAchievements();
-        });
-
-        // --- Event Listeners ---
-        startBtn.addEventListener('click', startTracking);
-        pauseBtn.addEventListener('click', pauseTracking);
-        resetBtn.addEventListener('click', resetJourney);
-        simBtn.addEventListener('click', toggleSimulation);
-
-        recenterBtn.addEventListener('click', () => {
-          if (lastPosition) {
-            map.setView([lastPosition.lat, lastPosition.lng], 17);
-          } else {
-            map.setView(map.getCenter(), 17);
-          }
-        });
-
-        infoBtn.addEventListener('click', () => {
-          infoModal.classList.add('active');
-        });
-
-        closeModalBtn.addEventListener('click', () => {
+      infoModal.addEventListener('click', (e) => {
+        if (e.target === infoModal) {
           infoModal.classList.remove('active');
-        });
-
-        infoModal.addEventListener('click', (e) => {
-          if (e.target === infoModal) {
-            infoModal.classList.remove('active');
-          }
-        });
-
-        // Initialize App on DOM Load
-        document.addEventListener('DOMContentLoaded', () => {
-          initMap();
-          renderAchievements();
-          renderReadout();
-        });
-
-        // If DOM already loaded
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-          initMap();
-          renderAchievements();
-          renderReadout();
         }
-      })();
-    </script>
-  </body>
+      });
+
+      function initializeApp() {
+        if (appInitialized) return;
+        appInitialized = true;
+        initMap();
+        renderAchievements();
+        renderReadout();
+      }
+
+      // Initialize App exactly once, regardless of readyState timing.
+      document.addEventListener('DOMContentLoaded', initializeApp);
+
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        initializeApp();
+      }
+    })();
+  </script>
+</body>
+
 </html>
