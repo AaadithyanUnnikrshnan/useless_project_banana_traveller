@@ -1,0 +1,10 @@
+{
+  "name": "How Many Bananas Away",
+  "description": "A neo-brutalist GPS journey tracker that converts real-world physical distance into humorous, unconventional units.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
